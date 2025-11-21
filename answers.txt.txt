@@ -1,0 +1,140 @@
+CSE233 - Operating Systems Lab 5
+Process Management Assignment
+================================
+
+EXERCISE 1: PROCESS CREATION USING fork()
+------------------------------------------
+File: process_creation.c
+
+Explanation:
+This program demonstrates the fork() system call, which creates a new process by duplicating the calling process.
+
+How it works:
+1. fork() creates a child process that is a copy of the parent process
+2. fork() returns:
+   - 0 to the child process
+   - The child's PID to the parent process
+   - -1 if the fork fails
+
+3. The if-else structure checks the return value:
+   - if (pid == 0): This code runs in the CHILD process
+   - else if (pid > 0): This code runs in the PARENT process
+   - else: Fork failed
+
+4. Each process prints its own PID using getpid()
+
+Output: Both parent and child processes execute and print their respective PIDs.
+
+
+EXERCISE 2 & 3: STARTING AND STOPPING PROCESSES
+------------------------------------------------
+Commands used:
+- sleep 300 &          : Starts sleep process in background
+- jobs                 : Lists background jobs
+- ps aux | grep sleep  : Finds process ID
+- kill <PID>          : Terminates the process
+
+Explanation:
+- The & operator runs a command in the background, allowing the terminal to remain usable
+- ps aux shows all running processes
+- kill command sends signals to processes to terminate them
+- grep filters the output to show only lines containing "sleep"
+
+
+EXERCISE 4: PAUSING AND RESUMING PROCESSES
+-------------------------------------------
+Commands:
+- kill -STOP <PID>  : Pauses (suspends) a process
+- kill -CONT <PID>  : Resumes a paused process
+
+Explanation:
+- STOP signal suspends process execution without terminating it
+- CONT signal resumes the suspended process
+- The process maintains its state while paused
+
+
+EXERCISE 5: ROLE OF THE LINKER
+-------------------------------
+Files: file1.c, file2.c
+
+Explanation:
+This exercise demonstrates how the linker combines multiple object files into a single executable.
+
+file1.c contains:
+- The implementation of the hello() function
+- Prints "Hello from file1!"
+
+file2.c contains:
+- A declaration (prototype) of hello() function
+- The main() function that calls hello()
+
+The Linker's Job:
+1. Takes compiled object files (file1.o and file2.o)
+2. Resolves external references (main() calling hello())
+3. Combines them into a single executable
+4. Resolves symbol addresses so functions can call each other
+5. Adds necessary startup code and libraries
+
+Without the linker, file2.c couldn't find the hello() function implementation.
+
+
+EXERCISE 6: ROLE OF THE LOADER
+-------------------------------
+File: simple_program.c
+
+Explanation:
+This program is used to inspect dynamic library loading using the ldd command.
+
+The Loader's Job:
+1. Loads the executable from disk into memory
+2. Resolves dynamic library dependencies
+3. Maps shared libraries into the process address space
+4. Performs dynamic linking at runtime
+5. Sets up the execution environment
+6. Transfers control to the program's entry point
+
+When we run: ldd simple_program
+We see shared libraries like:
+- libc.so.6 (Standard C Library)
+- linux-vdso.so.1 (Virtual Dynamic Shared Object)
+- ld-linux.so.2 (Dynamic Linker/Loader)
+
+These libraries are loaded by the system loader when the program starts.
+
+
+SUMMARY OF LINKER VS LOADER
+============================
+
+LINKER:
+- Works at compile/build time
+- Combines multiple object files
+- Resolves symbolic references
+- Creates the final executable file
+- Static linking happens here
+
+LOADER:
+- Works at runtime (when program starts)
+- Loads executable into memory
+- Handles dynamic libraries
+- Sets up the execution environment
+- Transfers control to the program
+
+
+COMPILATION COMMANDS
+====================
+Exercise 1:
+gcc -Wall -Wextra process_creation.c -o process_creation
+
+Exercise 5:
+gcc -Wall -Wextra file1.c file2.c -o output_program
+
+Exercise 6:
+gcc -Wall -Wextra simple_program.c -o simple_program
+ldd simple_program
+
+
+MAKEFILE USAGE
+==============
+make all      - Compiles all programs
+make run      - Compiles and runs all programs
+make clean    - Removes all compiled executables
